@@ -1,4 +1,4 @@
-package com.example.modular_drone_app.data.model
+package com.example.modular_drone_app.data.model.module
 
 sealed interface ModuleData {
     val id: String
