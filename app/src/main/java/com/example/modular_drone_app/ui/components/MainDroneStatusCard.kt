@@ -1,6 +1,7 @@
 package com.example.modular_drone_app.ui.components
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,11 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.modular_drone_app.R
 import com.example.modular_drone_app.ui.theme.AppBackground
 import com.example.modular_drone_app.ui.theme.PrimaryAccent
@@ -45,8 +48,7 @@ fun MainDroneStatusCard() {
     Card(
         shape = RoundedCornerShape(32.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .height(320.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box(
@@ -63,13 +65,13 @@ fun MainDroneStatusCard() {
                 .padding(24.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 WeatherInfoSection()
 
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .height(200.dp)
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
@@ -115,18 +117,35 @@ private fun BottomStatusSection() {
             StatusRow(label = "HUB", status = "Połączono", isConnected = true)
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            IconButton(
-                onClick = { Toast.makeText(context, "Button start clicked!", Toast.LENGTH_SHORT).show() }
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            OutlinedButton(
+                onClick = { Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show() },
+                border = BorderStroke(1.dp, PrimaryAccent),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = PrimaryAccent
+                ),
+                modifier = Modifier.height(48.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Start",
-                    tint = PrimaryAccent,
-                    modifier = Modifier.size(48.dp)
-
+                    modifier = Modifier.size(20.dp)
                 )
-                Text("Rozpocznij", color = PrimaryAccent, fontWeight = FontWeight.Bold)
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = "ROZPOCZNIJ",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp
+                )
             }
         }
     }
