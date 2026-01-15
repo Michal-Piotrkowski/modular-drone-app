@@ -10,13 +10,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.modular_drone_app.ui.components.LastFlightMapCard
 import com.example.modular_drone_app.ui.components.MainDroneStatusCard
+import com.example.modular_drone_app.ui.viewmodel.DroneViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: DroneViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -37,7 +43,7 @@ fun HomeScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        MainDroneStatusCard()
+        MainDroneStatusCard(viewModel)
 
         Spacer(modifier = Modifier.height(30.dp))
     }
