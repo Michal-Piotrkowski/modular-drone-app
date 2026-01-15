@@ -1,46 +1,58 @@
 package com.example.modular_drone_app.data.model.module
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonClassDiscriminator
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+@JsonClassDiscriminator("type")
 sealed interface ModuleData {
     val id: String
-    val moduleType: ModuleType
     val status: ModuleStatus
     val swVersion: String
 }
 
+
+@Serializable
+@SerialName("ELECTROMAGNET")
 data class ElectromagnetModuleData(
     override val id: String,
     override val status: ModuleStatus,
     override val swVersion: String,
-    override val moduleType: ModuleType = ModuleType.ELECTROMAGNET,
 
     val electromagnetState: ElectromagnetState
 ) : ModuleData
 
+@Serializable
+@SerialName("GRIPPER")
 data class GripperModuleData(
     override val id: String,
     override val status: ModuleStatus,
     override val swVersion: String,
-    override val moduleType: ModuleType = ModuleType.GRIPPER,
 
     val gripperState: GripperState
 ) : ModuleData
 
+@Serializable
+@SerialName("GPS")
 data class GPSModuleData(
     override val id: String,
     override val status: ModuleStatus,
     override val swVersion: String,
-    override val moduleType: ModuleType = ModuleType.GPS,
 
     val latitude: Double,
     val longitude: Double,
     val altitude: Double
 ) : ModuleData
 
+@Serializable
+@SerialName("SENSORS")
 data class SensorsModuleData(
     override val id: String,
     override val status: ModuleStatus,
     override val swVersion: String,
-    override val moduleType: ModuleType = ModuleType.SENSORS,
 
     val temperature: Double,
     val humidity: Double,
