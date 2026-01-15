@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.modular_drone_app.ui.components.FlightModeCard
 import com.example.modular_drone_app.ui.components.LastFlightMapCard
 import com.example.modular_drone_app.ui.components.MainDroneStatusCard
 import com.example.modular_drone_app.ui.viewmodel.DroneViewModel
@@ -46,5 +47,7 @@ fun HomeScreen(
         MainDroneStatusCard(viewModel)
 
         Spacer(modifier = Modifier.height(30.dp))
+
+        FlightModeCard()
     }
 }
