@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class DroneSystemState {
     @SerialName("ACTIVE") ACTIVE,
+    @SerialName("FLYING") FLYING,
     @SerialName("IDLE") IDLE,
     @SerialName("ERROR") ERROR,
     @SerialName("OFFLINE") OFFLINE

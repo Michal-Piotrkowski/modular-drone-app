@@ -34,7 +34,9 @@ fun MainDroneStatusCard(
     viewModel: DroneViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val isConnected = uiState.drone.isConnected
+
+    val isAppConnectedToHub = uiState.isAppConnectedToHub
+    val isHubConnectedToDrone = uiState.drone.isHubConnected
 
     Card(
         shape = RoundedCornerShape(32.dp),
@@ -68,9 +70,9 @@ fun MainDroneStatusCard(
                     )
                 }
 
-
                 BottomStatusSection(
-                    isConnected = isConnected,
+                    isSocketConnected = isAppConnectedToHub,
+                    isDroneConnected = isHubConnectedToDrone,
                     droneStatusText = uiState.drone.droneStatus.name,
                     onToggleClick = { context ->
                         viewModel.toggleConnection(context)
@@ -97,7 +99,8 @@ private fun WeatherInfoSection() {
 
 @Composable
 private fun BottomStatusSection(
-    isConnected: Boolean,
+    isSocketConnected: Boolean,
+    isDroneConnected: Boolean,
     droneStatusText: String,
     onToggleClick: (Context) -> Unit
 ) {
@@ -111,13 +114,13 @@ private fun BottomStatusSection(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             StatusRow(
                 label = "Dron",
-                status = if (isConnected) droneStatusText else "Rozłączono",
-                isOk = isConnected
+                status = if (isDroneConnected) droneStatusText else "Brak danych",
+                isOk = isDroneConnected
             )
             StatusRow(
                 label = "HUB",
-                status = if (isConnected) "Połączono" else "Szukanie...",
-                isOk = isConnected
+                status = if (isSocketConnected) "Połączono" else "Szukanie...",
+                isOk = isSocketConnected
             )
         }
 
@@ -131,25 +134,25 @@ private fun BottomStatusSection(
                 onClick = { onToggleClick(context) },
                 border = BorderStroke(
                     1.dp,
-                    if (isConnected) Color.Red else PrimaryAccent
+                    if (isSocketConnected) Color.Red else PrimaryAccent
                 ),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if (isConnected) Color.Red.copy(alpha = 0.1f) else Color.Transparent,
-                    contentColor = if (isConnected) Color.Red else PrimaryAccent
+                    containerColor = if (isSocketConnected) Color.Red.copy(alpha = 0.1f) else Color.Transparent,
+                    contentColor = if (isSocketConnected) Color.Red else PrimaryAccent
                 ),
                 modifier = Modifier.height(48.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
-                    imageVector = if (isConnected) Icons.Default.Close else Icons.Default.PlayArrow,
-                    contentDescription = if (isConnected) "Stop" else "Start",
+                    imageVector = if (isSocketConnected) Icons.Default.Close else Icons.Default.PlayArrow,
+                    contentDescription = if (isSocketConnected) "Stop" else "Start",
                     modifier = Modifier.size(20.dp)
                 )
 
                 Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
-                    text = if (isConnected) "ROZŁĄCZ" else "ROZPOCZNIJ",
+                    text = if (isSocketConnected) "ROZŁĄCZ" else "ROZPOCZNIJ",
                     fontWeight = FontWeight.Bold,
                     fontSize = 9.sp
                 )
@@ -170,13 +173,11 @@ private fun StatusRow(label: String, status: String, isOk: Boolean) {
             modifier = Modifier
                 .size(8.dp)
                 .border(
-
                     color = if (isOk) StatusConnected else StatusDisconnected,
                     width = 1.5.dp,
                     shape = RoundedCornerShape(50),
                 )
                 .background(
-
                     color = if (isOk) StatusConnected else Color.Transparent,
                     shape = RoundedCornerShape(50)
                 )

@@ -1,12 +1,12 @@
 package com.example.modular_drone_app.data.model.drone
 
 import com.example.modular_drone_app.data.model.module.ModuleData
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class DroneApiResponse(
-    @SerialName("batteryLevel") val batteryLevel: Int,
-    @SerialName("droneStatus") val droneStatus: DroneSystemState,
-    @SerialName("modules") val modules: List<ModuleData>
+    val type: String,              // np. "DRONE_STATE"
+    val batteryLevel: Float,       // np. 85.5
+    val droneStatus: String,       // np. "READY", "ARMED"
+    val modules: List<ModuleData>  // Prosta lista modułów
 )
