@@ -7,12 +7,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.PrintWriter
+import java.net.InetSocketAddress
 import java.net.Socket
 
-class SocketClient(
-    private val ip: String = "10.0.2.2",
-    private val port: Int = 8080
-) {
+class SocketClient {
     private var socket: Socket? = null
     private var reader: BufferedReader? = null
     private var writer: PrintWriter? = null
@@ -20,63 +18,86 @@ class SocketClient(
     suspend fun connect(ip: String, port: Int): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                disconnect()
-                println("Connecting to $ip:$port...")
-                socket = Socket(ip, port)
-                writer = PrintWriter(socket!!.getOutputStream(), true)
-                reader = BufferedReader(socket!!.getInputStream().reader())
-                println("Connected!")
-                true
+                println("DEBUG_NET: [SocketClient] Rozpoczynam łączenie z $ip:$port ...")
+                disconnect() // Czyścimy stare śmieci
+
+                socket = Socket()
+                // Ustawiamy timeout 5 sekund, żeby nie czekać w nieskończoność
+                val socketAddress = InetSocketAddress(ip, port)
+
+                println("DEBUG_NET: [SocketClient] Fizyczne otwieranie gniazda...")
+                socket?.connect(socketAddress, 5000)
+
+                if (socket?.isConnected == true) {
+                    println("DEBUG_NET: [SocketClient] Gniazdo otwarte! Tworzę strumienie IO...")
+                    writer = PrintWriter(socket!!.getOutputStream(), true)
+                    reader = BufferedReader(socket!!.getInputStream().reader())
+                    println("DEBUG_NET: [SocketClient] SUKCES! Połączono i gotowe do pracy.")
+                    true
+                } else {
+                    println("DEBUG_NET: [SocketClient] Gniazdo nie jest połączone po próbie connect().")
+                    false
+                }
             } catch (ex: Exception) {
-                println("Connection error: ${ex.message}")
+                println("DEBUG_NET: [SocketClient] BŁĄD KRYTYCZNY podczas łączenia: ${ex.message}")
+                ex.printStackTrace()
                 false
             }
         }
     }
 
-    suspend fun observeMessages(): Flow<String> = flow{
+    fun observeMessages(): Flow<String> = flow{
+        println("DEBUG_NET: [SocketClient] Zaczynam nasłuchiwać wiadomości w pętli...")
         while (socket != null && socket!!.isConnected && !socket!!.isClosed) {
             try {
+                // To jest linijka blokująca - czeka aż przyjdą dane
                 val line = reader?.readLine()
+
                 if (line != null) {
+                    // println("DEBUG_NET: [SocketClient] Odebrano surowe dane: $line") // Odkomentuj jeśli chcesz spam w logach
                     emit(line)
                 } else {
+                    println("DEBUG_NET: [SocketClient] Odebrano NULL (serwer zamknął połączenie).")
                     break
                 }
             } catch (ex: Exception) {
-                println("Read error: ${ex.message}")
+                println("DEBUG_NET: [SocketClient] Błąd podczas czytania: ${ex.message}")
                 break
             }
         }
+        println("DEBUG_NET: [SocketClient] Koniec nasłuchiwania.")
     }.flowOn(Dispatchers.IO)
 
-    suspend fun readLine(): String? {
-        return withContext(Dispatchers.IO) {
+    suspend fun sendMessage(message: String) {
+        withContext(Dispatchers.IO) {
             try {
-                reader?.readLine()
-            } catch (ex: Exception) {
-                println("Read error: ${ex.message}")
-                null
-            }
-        }
-    }
-
-    suspend fun sendLine(message: String) {
-        return withContext(Dispatchers.IO) {
-            try {
-                writer?.println(message)
-            } catch (ex: Exception) {
-                println("Write error: ${ex.message}")
+                println("DEBUG_NET: [SocketClient] Wysyłam: $message")
+                val outputStream = socket?.getOutputStream()
+                if (outputStream != null) {
+                    val bytes = (message + "\n").toByteArray(Charsets.UTF_8)
+                    outputStream.write(bytes)
+                    outputStream.flush()
+                } else {
+                    println("DEBUG_NET: [SocketClient] Błąd wysyłania - OutputStream jest null!")
+                }
+            } catch (e: Exception) {
+                println("DEBUG_NET: [SocketClient] Błąd wysyłania: ${e.message}")
+                e.printStackTrace()
             }
         }
     }
 
     fun disconnect() {
-        try {
-            socket?.close()
-            socket = null
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (socket != null) {
+            println("DEBUG_NET: [SocketClient] Zamykanie połączenia.")
+            try {
+                socket?.close()
+                socket = null
+                reader = null
+                writer = null
+            } catch (e: Exception) {
+                println("DEBUG_NET: [SocketClient] Błąd przy zamykaniu: ${e.message}")
+            }
         }
     }
 }

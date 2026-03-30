@@ -1,15 +1,60 @@
+# .gitignore for Android / Gradle / IntelliJ projects
+# Place this file in the repository root (C:\Users\MPMix\AndroidStudioProjects\modulardroneapp)
+# so it covers app/ and wszystkie moduły.
+
+# IntelliJ / Android Studio
+/.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
+*.iws
+
+# Keep some workspace files out explicitly (optional)
 /.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+/.idea/tasks.xml
+/.idea/gradle.xml
+
+# Gradle
+.gradle/
+/build/
+**/build/
+
+# Local configuration
+/local.properties
 local.properties
+
+# Signing keys
+*.jks
+key.properties
+*.keystore
+
+# Android captures and generated files
+/captures/
+.externalNativeBuild/
+.cxx/
+obj/
+
+# Generated resources
+/generated/
+.generated/
+
+# Kotlin/Java
+*.class
+*.log
+
+# Native / NDK
+/ndk-build/
+
+# Misc
+.DS_Store
+Thumbs.db
+
+# Node / Python (if present)
+node_modules/
+__pycache__/
+
+# Proguard
+proguard-rules.pro
+
+# Ignore IDE run configs (if you prefer local only)
+.idea/*runConfigurations*
+
+# End of file

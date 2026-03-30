@@ -40,14 +40,16 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LastFlightMapCard()
+        MainDroneStatusCard(viewModel)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        MainDroneStatusCard(viewModel)
+        FlightModeCard()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LastFlightMapCard()
 
         Spacer(modifier = Modifier.height(30.dp))
-
-        FlightModeCard()
     }
 }

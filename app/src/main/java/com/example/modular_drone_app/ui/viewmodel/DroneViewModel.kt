@@ -12,25 +12,24 @@ class DroneViewModel: ViewModel() {
     val uiState = DataNetworkService.uiState
 
     fun toggleConnection(context: Context) {
-        println("DEBUG: Kliknięto przycisk! Sprawdzam stan...")
+        println("DEBUG_NET: [ViewModel] Kliknięto przycisk Połącz/Rozłącz.")
 
         val currentState = uiState.value.drone
 
-        if (currentState.isConnected) {
-            println("DEBUG: Jestem połączony, więc rozłączam.")
+        if (currentState.isHubConnected) {
+            println("DEBUG_NET: [ViewModel] Aktualnie połączony -> Rozłączam.")
             DataNetworkService.disconnect()
         } else {
-            println("DEBUG: Jestem rozłączony, próbuję łączyć.")
+            println("DEBUG_NET: [ViewModel] Aktualnie rozłączony -> Łączę...")
 
-             if (!NetworkUtils.isWifiConnected(context)) {
-                 println("DEBUG: Blokada - brak Wi-Fi!")
-                 Toast.makeText(context, "Brak Wi-Fi!", Toast.LENGTH_SHORT).show()
-                 return
-             }
+            // Adres IP - wybierz właściwy!
+            // val targetIp = "192.168.1.36" // Dla prawdziwego telefonu
+            val targetIp = "10.0.0.2"     // Dla Emulatora
+            val targetPort = 8080
 
             viewModelScope.launch {
-                println("DEBUG: Uruchamiam DataNetworkService.connect...")
-                DataNetworkService.connect("10.0.2.2", 8080)
+                println("DEBUG_NET: [ViewModel] Wywołuję connect($targetIp, $targetPort)")
+                DataNetworkService.connect(targetIp, targetPort)
             }
         }
     }
