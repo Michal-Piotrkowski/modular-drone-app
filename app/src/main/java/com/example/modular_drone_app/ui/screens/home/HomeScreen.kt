@@ -21,7 +21,8 @@ import com.example.modular_drone_app.ui.viewmodel.DroneViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: DroneViewModel
+    viewModel: DroneViewModel,
+    onMapDetailsClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -34,7 +35,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Rozpocznij lot dronem",
+            text = "Start Drone Flight",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -48,8 +49,10 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LastFlightMapCard()
+        LastFlightMapCard(
+            onOptionsClick = onMapDetailsClick
+        )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
