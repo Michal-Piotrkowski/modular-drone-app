@@ -12,9 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object DataNetworkService {
-    private val socketClient = SocketClient()
+@Singleton
+class DataNetworkService @Inject constructor(
+    private val socketClient: SocketClient
+) {
     private val _uiState = MutableStateFlow(TotalState())
     val uiState: StateFlow<TotalState> = _uiState.asStateFlow()
 

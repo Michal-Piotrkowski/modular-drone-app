@@ -33,9 +33,10 @@ val HudWarning = Color(0xFFFF5252)
 @Composable
 fun OverlayControlPanel(
     onClose: () -> Unit,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
+    dataNetworkService: DataNetworkService
 ) {
-    val uiState by DataNetworkService.uiState.collectAsState()
+    val uiState by dataNetworkService.uiState.collectAsState()
     val drone = uiState.drone
 
     Card(
@@ -123,7 +124,7 @@ fun OverlayControlPanel(
                         isActive = mod.isActive,
                         icon = if (mod.name.contains("Magnes", true) || mod.name.contains("electromagnet", true)) Icons.Default.Bolt else Icons.Default.PowerSettingsNew,
                         onClick = {
-                            DataNetworkService.toggleModule(mod.name, mod.isActive)
+                            dataNetworkService.toggleModule(mod.name, mod.isActive)
                         }
                     )
                 }

@@ -9,8 +9,9 @@ import java.io.BufferedReader
 import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
+import javax.inject.Inject
 
-class SocketClient {
+class SocketClient @Inject constructor() {
     private var socket: Socket? = null
     private var reader: BufferedReader? = null
     private var writer: PrintWriter? = null

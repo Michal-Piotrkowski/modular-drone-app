@@ -6,10 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.modular_drone_app.data.connection.DataNetworkService
 import com.example.modular_drone_app.utils.NetworkUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DroneViewModel: ViewModel() {
-    val uiState = DataNetworkService.uiState
+@HiltViewModel
+class DroneViewModel @Inject constructor(
+    private val dataNetworkService: DataNetworkService
+): ViewModel() {
+    val uiState = dataNetworkService.uiState
 
     fun toggleConnection(context: Context) {
         println("DEBUG_NET: [ViewModel] Kliknięto przycisk Połącz/Rozłącz.")
@@ -18,7 +23,7 @@ class DroneViewModel: ViewModel() {
 
         if (currentState.isHubConnected) {
             println("DEBUG_NET: [ViewModel] Aktualnie połączony -> Rozłączam.")
-            DataNetworkService.disconnect()
+            dataNetworkService.disconnect()
         } else {
             println("DEBUG_NET: [ViewModel] Aktualnie rozłączony -> Łączę...")
 
@@ -29,7 +34,7 @@ class DroneViewModel: ViewModel() {
 
             viewModelScope.launch {
                 println("DEBUG_NET: [ViewModel] Wywołuję connect($targetIp, $targetPort)")
-                DataNetworkService.connect(targetIp, targetPort)
+                dataNetworkService.connect(targetIp, targetPort)
             }
         }
     }

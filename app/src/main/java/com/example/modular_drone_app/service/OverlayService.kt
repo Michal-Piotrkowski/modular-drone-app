@@ -16,8 +16,15 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.example.modular_drone_app.ui.overlay.OverlayControlPanel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import com.example.modular_drone_app.data.connection.DataNetworkService
 
+@AndroidEntryPoint
 class OverlayService() : Service(), LifecycleOwner, SavedStateRegistryOwner {
+    @Inject
+    lateinit var dataNetworkService: DataNetworkService
+
     private lateinit var windowManager: WindowManager
     private var overlayView: ComposeView? = null
     private val lifecycleRegistry = LifecycleRegistry(this)
@@ -50,14 +57,14 @@ class OverlayService() : Service(), LifecycleOwner, SavedStateRegistryOwner {
         overlayView = ComposeView(this).apply {
             setViewTreeLifecycleOwner(this@OverlayService)
             setViewTreeSavedStateRegistryOwner(this@OverlayService)
-
             setContent {
                 OverlayControlPanel(
                     onClose = { stopSelf() },
-                    onMove = { deltaX, deltaY ->
-                        params.x += deltaX
-                        params.y += deltaY
-                        windowManager.updateViewLayout(overlayView, params)
+                    dataNetworkService = dataNetworkService,
+                    onMove = { dx, dy ->
+                        params.x += dx
+                        params.y += dy
+                        windowManager.updateViewLayout(this, params)
                     }
                 )
             }
